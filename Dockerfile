@@ -31,8 +31,8 @@ ENV BUILD_DOCKER_GROUP_ID 1001
 #  && echo $BUILD_USER:$BUILD_PASS |chpasswd \
 #  && usermod -a -G $BUILD_DOCKER_GROUP $BUILD_USER
 
-RUN groupadd -g $BUILD_DOCKER_GROUP_ID $BUILD_DOCKER_GROUP \
-  && adduser -D $BUILD_USER -u $BUILD_USER_ID -s /bin/sh -G $BUILD_USER_GROUP \
+RUN addgroup -g $BUILD_DOCKER_GROUP_ID $BUILD_DOCKER_GROUP \
+  && adduser -D $BUILD_USER -u $BUILD_USER_ID -s /bin/bash -G $BUILD_USER_GROUP \
   &&  chown -R $BUILD_USER:$BUILD_USER_GROUP /home/$BUILD_USER \
   &&  echo "$BUILD_USER:$BUILD_PASS" | chpasswd \
   && usermod -a -G $BUILD_DOCKER_GROUP $BUILD_USER
@@ -75,6 +75,8 @@ RUN npm version && npm install -g npm@${NPM_VERSION} && npm version \
   && ln -s ${ANT_HOME}/bin/ant /usr/bin/ant
 
 #  && update-alternatives --install /usr/bin/ant ant ${ANT_HOME}/bin/ant 20000
+
+RUN chmod -R +r /usr/local/lib/node_modules/npm/node_modules/*
 
 # Install our required ant libs
 COPY ant-libs/*.jar ${ANT_HOME}/lib/
