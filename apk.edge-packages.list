@@ -1,0 +1,10 @@
+curl=7.52.1-r2
+cloc
+dos2unix
+openssh-client
+openssh-server
+shadow
+python-dev
+py-setuptools
+py-pip
+libstdc++
