@@ -88,33 +88,40 @@ RUN mkdir -p /var/lib/jenkins \
 # Add in our common jenkins node tools for bldmgr
 COPY jenkins_nodes /home/$BUILD_USER/jenkins_nodes
 
-# Make our build user require no tty
-# && Add user to sudoers with NOPASSWD
-# && Install and configure SSHD (needed by the Jenkins slave-on-demand plugin)
-# RUN echo "Defaults:$BUILD_USER !requiretty" >> /etc/sudoers \
-#   && echo "$BUILD_USER ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers \
-#   && ssh-keygen -q -N "" -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key \
-#   && ssh-keygen -q -N "" -t ed25519 -f /etc/ssh/ssh_host_ed25519_key \
-#   && ssh-keygen -q -N "" -t rsa -f /etc/ssh/ssh_host_rsa_key \
-#   && sed -ri 's/session    required     pam_loginuid.so/#session    required     pam_loginuid.so/g' /etc/pam.d/sshd \
-#   && sed -ri 's/#PermitEmptyPasswords no/PermitEmptyPasswords yes/g' /etc/ssh/sshd_config \
-#   && mkdir -p /home/$BUILD_USER/.ssh \
-#   && chown -R $BUILD_USER:$BUILD_USER_GROUP /home/$BUILD_USER \
-#   && chmod 700 /home/$BUILD_USER/.ssh
-
-
-RUN /usr/bin/ssh-keygen -A
-
-RUN set -x && \
-    echo "UsePrivilegeSeparation no" >> /etc/ssh/sshd_config && \
-    echo "PermitRootLogin no" >> /etc/ssh/sshd_config && \
-    echo "AllowGroups ${BUILD_USER_GROUP}" >> /etc/ssh/sshd_config
-
 # Comment these lines to disable sudo
 RUN apk --update add sudo && \
     rm -rf /var/cache/apk/*
 ADD /sudoers.txt /etc/sudoers
 RUN chmod 440 /etc/sudoers
+
+# Make our build user require no tty
+# && Add user to sudoers with NOPASSWD
+# && Install and configure SSHD (needed by the Jenkins slave-on-demand plugin)
+# RUN echo "Defaults:$BUILD_USER !requiretty" >> /etc/sudoers \
+#   && echo "$BUILD_USER ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers \
+RUN ssh-keygen -q -N "" -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key \
+  && ssh-keygen -q -N "" -t ed25519 -f /etc/ssh/ssh_host_ed25519_key \
+  && ssh-keygen -q -N "" -t rsa -f /etc/ssh/ssh_host_rsa_key \
+  # && sed -ri 's/session    required     pam_loginuid.so/#session    required     pam_loginuid.so/g' /etc/pam.d/sshd \
+  # && sed -ri 's/#PermitEmptyPasswords no/PermitEmptyPasswords yes/g' /etc/ssh/sshd_config \
+  && mkdir -p /home/$BUILD_USER/.ssh \
+  && chown -R $BUILD_USER:$BUILD_USER_GROUP /home/$BUILD_USER \
+  && chmod 700 /home/$BUILD_USER/.ssh
+
+# RUN /usr/bin/ssh-keygen -A
+
+RUN set -x && \
+    echo "UsePrivilegeSeparation no" >> /etc/ssh/sshd_config && \
+    echo "PermitRootLogin no" >> /etc/ssh/sshd_config && \
+    echo "AllowGroups ${BUILD_USER_GROUP}" >> /etc/ssh/sshd_config \
+    && sed -ri 's/#PermitEmptyPasswords no/PermitEmptyPasswords yes/g' /etc/ssh/sshd_config
+
+
+# # Comment these lines to disable sudo
+# RUN apk --update add sudo && \
+#     rm -rf /var/cache/apk/*
+# ADD /sudoers.txt /etc/sudoers
+# RUN chmod 440 /etc/sudoers
 
 #setup jenkins dir
 #RUN mkdir -p /var/lib/jenkins \
