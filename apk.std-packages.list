@@ -1,3 +1,5 @@
+ruby
+ruby-dev
 openjdk7-jre
 openssh
 git
@@ -19,3 +21,4 @@ libxml2-dev
 jq
 gnupg
 build-base
+yarn

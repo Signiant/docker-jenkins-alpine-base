@@ -1,4 +1,4 @@
-curl=7.52.1-r2
+curl
 cloc
 dos2unix
 openssh-client
