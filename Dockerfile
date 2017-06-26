@@ -76,8 +76,6 @@ RUN npm version && npm install -g npm@${NPM_VERSION} && npm version \
 
 #  && update-alternatives --install /usr/bin/ant ant ${ANT_HOME}/bin/ant 20000
 
-RUN chmod -R +r /usr/local/lib/node_modules/npm/node_modules/*
-
 # Install our required ant libs
 COPY ant-libs/*.jar ${ANT_HOME}/lib/
 RUN chmod 644 ${ANT_HOME}/lib/*.jar \
